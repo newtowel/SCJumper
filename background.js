@@ -3,7 +3,9 @@ chrome.contextMenus.create({
     "type":"normal",
     "contexts":["link"],
     "onclick":function(info) {
-        let merchandise  = info.linkUrl.match(/B0[0-9A-Z]{8}/)[0];
+        console.log(info.linkUrl);
+        const regexp = /[0-9A-Z]{10}/;
+        const merchandise  = info.linkUrl.match(regexp)[0];
         console.log(merchandise);
         let url = "https://sakura-checker.jp/search/"+merchandise;
         chrome.tabs.create({url :url});
