@@ -3,15 +3,18 @@ chrome.contextMenus.create({
     "type":"normal",
     "contexts":["link"],
     "onclick":function(info) {
-        console.log(info.linkUrl);
-        //リンク文字列で最初に現れる10文字の英数字をサクラチェッカーで検索時の商品ID文字列と推測
-        const regexp = /[0-9A-Z]{10}/;
-        //リンク文字列から商品IDと思われる文字列を検索
-        const merchandise  = info.linkUrl.match(regexp)[0];
-        console.log(merchandise);
-        //サクラチェッカーの検索URLを生成
-        let url = "https://sakura-checker.jp/search/"+merchandise;
-        //検索結果を新しいタブで表示
-        chrome.tabs.create({url :url});
+        
+        console.log("リダイレクト前：", info.linkUrl);
+        
+        //商品ページURL文字列における、スラッシュに挟まれた連続した10文字の英数字の中で最初に現れるものを、サクラチェッカーでの検索時の商品ID文字列と推測
+        const regexp = /\/[0-9A-Z]{10}\//;
+        
+        //商品一覧ページにおけるリンクURLと実際の商品ページのURLは（リダイレクトされて）異なるのでfetch APIでリダイレクト先のURLを取得し、そちらのURL文字列を評価し、得られた推測商品IDでもってサクラチェッカーの評価ページを開く
+        fetch(info.linkUrl).then(response => {
+            console.log("リダイレクト後：", response.url);
+            const merchandise = response.url.match(regexp)[0].substr(1,10);
+            console.log("推測商品ID：", merchandise);
+            chrome.tabs.create({url:"https://sakura-checker.jp/search/" + merchandise})
+        });
     }
 });
