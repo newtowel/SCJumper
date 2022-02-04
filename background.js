@@ -12,7 +12,7 @@ chrome.contextMenus.create({
         //商品一覧ページにおけるリンクURLと実際の商品ページのURLは（リダイレクトされて）異なるのでfetch APIでリダイレクト先のURLを取得し、そちらのURL文字列を評価し、得られた推測商品IDでもってサクラチェッカーの評価ページを開く
         fetch(info.linkUrl).then(response => {
             console.log("リダイレクト後：", response.url);
-            const merchandise = response.url.match(regexp)[0].substr(1,10);
+            const merchandise = response.url.match(regexp)[0].substring(1,10);
             console.log("推測商品ID：", merchandise);
             chrome.tabs.create({url:"https://sakura-checker.jp/search/" + merchandise})
         });
